@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.DrawBoardMapper">
+
+	<insert id="drawcreate">
+		INSERT INTO draw( title, latitude, longitude, xml,
+		dat,picture)
+		values( #{title}, #{latitude},
+		#{longitude},
+		#{xml},#{dat},#{picture})
+	</insert>
+
+	<select id="drawread" resultType="org.zerock.domain.DrawBoardVO">
+		select * from draw where id_num
+		= #{id_num}
+	</select>
+
+	<update id="drawupdate">
+		update draw set title
+		=#{title},latitude=#{latitude},longitude=#{longitude},xml=#{xml},dat=#{dat},picture=#{picture}
+		where id_num =#{id_num}
+	</update>
+
+	<delete id="drawdelete">
+		delete from draw where id_num=#{id_num}
+	</delete>
+
+	<select id="drawlistAll" resultType="org.zerock.domain.DrawBoardVO">
+		<![CDATA[
+		select * from draw
+		where id_num>0
+		order by id_num desc, regdate desc]]>
+	</select>
+
+	<select id="drawlistPage" resultType="DrawBoardVO">
+		<![CDATA[select * from draw where id_num order by id_num desc, regdate desc limit #{page},10]]>
+	</select>
+
+	<select id="drawlistCriteria" resultType="DrawBoardVO">
+ 		<![CDATA[select * from draw where id_num > 0 order by id_num desc, regdate desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="drawcountPaging" resultType="int">
+		<![CDATA[select count(id_num) from draw where id_num > 0 ]]>
+	</select>
+
+	<sql id="drawsearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">
+				and title like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'c'.toString()">
+				and contents like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'w'.toString()">
+				and writer like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'tc'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%') OR contents
+				like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'cw'.toString()">
+				and ( contents like CONCAT('%', #{keyword}, '%') OR
+				writer like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'tcw'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%')
+				OR
+				contents
+				like CONCAT('%', #{keyword}, '%')
+				OR
+				writer like CONCAT('%',
+				#{keyword}, '%'))
+			</if>
+		</if>
+	</sql>
+
+	<select id="drawlistSearch" resultType="DrawBoardVO">
+		<![CDATA[select * from draw where id_num > 0 ]]>
+		<include refid="drawsearch"></include>
+		<![CDATA[order by id_num desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="drawlistSearchCount" resultType="int">
+		<![CDATA[select count(id_num) from draw where id_num > 0]]>
+		<include refid="drawsearch"></include>
+	</select>
+
+	<select id="drawCount" resultType="int">
+		<![CDATA[select count(*) from draw]]>
+	</select>
+	
+	<select id="DTOlistAll" resultType="org.zerock.dto.GpsDTO">
+		<![CDATA[select * from draw	where id_num>0 order by id_num desc, regdate desc]]>
+	</select>
+
+</mapper>  
+  

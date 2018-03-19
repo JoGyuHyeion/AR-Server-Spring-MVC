@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.GeoBoardMapper">
+
+	<insert id="geocreate">
+		INSERT INTO geo( title, latitude, longitude, xml,
+		dat,pinmarker)
+		values( #{title}, #{latitude},
+		#{longitude},
+		#{xml},#{dat},#{pinmarker})
+	</insert>
+
+	<select id="georead" resultType="org.zerock.domain.GeoBoardVO">
+		select * from geo where id_num
+		=
+		#{id_num}
+	</select>
+
+	<update id="geoupdate">
+		update geo set title
+		=#{title},latitude=#{latitude},longitude=#{longitude},xml=#{xml},dat=#{dat},pinmarker=#{pinmarker}
+		where id_num =#{id_num}
+	</update>
+
+	<delete id="geodelete">
+		delete from geo where id_num=#{id_num}
+	</delete>
+
+	<select id="geolistAll" resultType="org.zerock.domain.GeoBoardVO">
+		<![CDATA[
+		select * from geo
+		where id_num>0
+		order by id_num desc, regdate desc]]>
+	</select>
+
+	<select id="geolistPage" resultType="GeoBoardVO">
+		<![CDATA[select * from geo where id_num order by id_num desc, regdate desc limit #{page},10]]>
+	</select>
+
+	<select id="geolistCriteria" resultType="GeoBoardVO">
+ 		<![CDATA[select * from geo where id_num > 0 order by id_num desc, regdate desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="geocountPaging" resultType="int">
+		<![CDATA[select count(id_num) from geo where id_num > 0 ]]>
+	</select>
+
+	<sql id="geosearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">
+				and title like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'c'.toString()">
+				and contents like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'w'.toString()">
+				and writer like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'tc'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%') OR contents
+				like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'cw'.toString()">
+				and ( contents like CONCAT('%', #{keyword}, '%') OR
+				writer like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'tcw'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%')
+				OR
+				contents
+				like CONCAT('%', #{keyword}, '%')
+				OR
+				writer like CONCAT('%',
+				#{keyword}, '%'))
+			</if>
+		</if>
+	</sql>
+
+	<select id="geolistSearch" resultType="GeoBoardVO">
+		<![CDATA[select * from geo where id_num > 0 ]]>
+		<include refid="geosearch"></include>
+		<![CDATA[order by id_num desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="geolistSearchCount" resultType="int">
+		<![CDATA[select count(id_num) from geo where id_num > 0]]>
+		<include refid="geosearch"></include>
+	</select>
+
+	<select id="geoCount" resultType="int">
+		<![CDATA[select count(*) from geo]]>
+	</select>
+
+	<select id="DTOlistAll" resultType="org.zerock.dto.GpsDTO">
+		<![CDATA[select * from geo	where id_num>0 order by id_num desc, regdate desc]]>
+	</select>
+</mapper>  
+  

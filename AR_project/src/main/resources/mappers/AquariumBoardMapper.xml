@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.AquariumBoardMapper">
+
+	<insert id="aquacreate">
+		INSERT INTO aquarium( title, latitude, longitude,
+		xml, dat)
+		values( #{title}, #{latitude},
+		#{longitude}, #{xml},#{dat})
+	</insert>
+
+	<select id="aquaread" resultType="org.zerock.domain.AquariumBoardVO">
+		select * from aquarium where
+		id_num
+		= #{id_num}
+	</select>
+
+	<update id="aquaupdate">
+		update aquarium set title
+		=#{title},latitude=#{latitude},longitude=#{longitude},xml=#{xml},dat=#{dat}
+		where id_num =#{id_num}
+	</update>
+
+	<delete id="aquadelete">
+		delete from aquarium where id_num=#{id_num}
+	</delete>
+
+	<select id="aqualistAll" resultType="org.zerock.domain.AquariumBoardVO">
+		<![CDATA[
+		select * from aquarium
+		where id_num>0
+		order by id_num desc, regdate desc]]>
+	</select>
+
+	<select id="aqualistPage" resultType="AquariumBoardVO">
+		<![CDATA[select * from aquarium where id_num order by id_num desc, regdate desc limit #{page},10]]>
+	</select>
+
+	<select id="aqualistCriteria" resultType="AquariumBoardVO">
+ 		<![CDATA[select * from aquarium where id_num > 0 order by id_num desc, regdate desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="aquacountPaging" resultType="int">
+		<![CDATA[select count(id_num) from aquarium where id_num > 0 ]]>
+	</select>
+
+	<sql id="aquasearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">
+				and title like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'c'.toString()">
+				and contents like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'w'.toString()">
+				and writer like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'tc'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%') OR contents
+				like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'cw'.toString()">
+				and ( contents like CONCAT('%', #{keyword}, '%') OR
+				writer like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'tcw'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%')
+				OR
+				contents
+				like CONCAT('%', #{keyword}, '%')
+				OR
+				writer like CONCAT('%',
+				#{keyword}, '%'))
+			</if>
+		</if>
+	</sql>
+
+	<select id="aqualistSearch" resultType="AquariumBoardVO">
+		<![CDATA[select * from aquarium where id_num > 0 ]]>
+		<include refid="aquasearch"></include>
+		<![CDATA[order by id_num desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="aqualistSearchCount" resultType="int">
+		<![CDATA[select count(id_num) from aquarium where id_num > 0]]>
+		<include refid="aquasearch"></include>
+	</select>
+
+	<select id="aquaCount" resultType="int">
+		<![CDATA[select count(*) from aquarium]]>
+	</select>
+
+	<select id="DTOlistAll" resultType="org.zerock.dto.GpsDTO">
+		<![CDATA[select * from aquarium	where id_num>0 order by id_num desc, regdate desc]]>
+	</select>
+
+</mapper>  
+  

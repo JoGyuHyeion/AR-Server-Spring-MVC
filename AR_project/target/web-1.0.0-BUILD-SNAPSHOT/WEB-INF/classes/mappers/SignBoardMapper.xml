@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.SignBoardMapper">
+
+	<insert id="signcreate">
+		INSERT INTO sign( title, latitude, longitude, xml,
+		dat,picture)
+		values( #{title}, #{latitude},
+		#{longitude},
+		#{xml},#{dat},#{picture})
+	</insert>
+
+	<select id="signread" resultType="org.zerock.domain.SignBoardVO">
+		select * from sign where id_num
+		= #{id_num}
+	</select>
+
+	<update id="signupdate">
+		update sign set title
+		=#{title},latitude=#{latitude},longitude=#{longitude},xml=#{xml},dat=#{dat},picture=#{picture}
+		where id_num =#{id_num}
+	</update>
+
+	<delete id="signdelete">
+		delete from sign where id_num=#{id_num}
+	</delete>
+
+	<select id="signlistAll" resultType="org.zerock.domain.SignBoardVO">
+		<![CDATA[
+		select * from sign
+		where id_num>0
+		order by id_num desc, regdate desc]]>
+	</select>
+
+	<select id="signlistPage" resultType="SignBoardVO">
+		<![CDATA[select * from sign where id_num order by id_num desc, regdate desc limit #{page},10]]>
+	</select>
+
+	<select id="signlistCriteria" resultType="SignBoardVO">
+ 		<![CDATA[select * from sign where id_num > 0 order by id_num desc, regdate desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="signcountPaging" resultType="int">
+		<![CDATA[select count(id_num) from sign where id_num > 0 ]]>
+	</select>
+
+	<sql id="signsearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">
+				and title like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'c'.toString()">
+				and contents like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'w'.toString()">
+				and writer like CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="searchType == 'tc'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%') OR contents
+				like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'cw'.toString()">
+				and ( contents like CONCAT('%', #{keyword}, '%') OR
+				writer like
+				CONCAT('%', #{keyword}, '%'))
+			</if>
+			<if test="searchType == 'tcw'.toString()">
+				and ( title like CONCAT('%', #{keyword}, '%')
+				OR
+				contents
+				like CONCAT('%', #{keyword}, '%')
+				OR
+				writer like CONCAT('%',
+				#{keyword}, '%'))
+			</if>
+		</if>
+	</sql>
+
+	<select id="signlistSearch" resultType="SignBoardVO">
+		<![CDATA[select * from sign where id_num > 0 ]]>
+		<include refid="signsearch"></include>
+		<![CDATA[order by id_num desc limit #{pageStart}, #{perPageNum}]]>
+	</select>
+
+	<select id="signlistSearchCount" resultType="int">
+		<![CDATA[select count(id_num) from sign where id_num > 0]]>
+		<include refid="signsearch"></include>
+	</select>
+
+	<select id="signCount" resultType="int">
+		<![CDATA[select count(*) from sign]]>
+	</select>
+
+	<select id="DTOlistAll" resultType="org.zerock.dto.GpsDTO">
+		<![CDATA[select * from sign	where id_num>0 order by id_num desc, regdate desc]]>
+	</select>
+</mapper>  
+  

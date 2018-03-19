@@ -1,0 +1,28 @@
+#contents {
+    text-align: left;
+}
+
+#left {
+    padding-left: 10px;
+}
+
+#right {
+    padding-right: 10px;
+    float: right;
+}
+table{
+    max-width: 700px;
+}
+h1.header>center{
+    padding-top: 20px;
+}
+#table{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+th{
+    width: 30%;
+}
+#button{
+    min-width: 350px;
+}
