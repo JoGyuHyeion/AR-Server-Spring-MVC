@@ -18,8 +18,3 @@ Location based (GPS) AR mobile App Rest Api Server
 * JSP
 * Mysql
 
-## Configuration
-
-> Java,RecyclerView(Custom), CustomView등을 통하여 구현.
- 
- 
